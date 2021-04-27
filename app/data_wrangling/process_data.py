@@ -3,7 +3,6 @@ import sys
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-%matplotlib inline
 import yfinance as yf
 
 
@@ -84,6 +83,7 @@ class StockDataAnalysis():
             plt.legend(loc='upper right')
             plt.show()
 
+    # Calcuate different features
     def calculate_rolling_stats(self, win=20):
         rm = self.data_norm.rolling(window=win).mean()
         rstd = self.data_norm.rolling(window=win).std()
@@ -109,8 +109,9 @@ class StockDataAnalysis():
         self.calculate_rolling_stats()
         self.calculate_bollinger_bands()
         self.calculate_daily_returns()
-        slef.calculate_momentum()
+        self.calculate_momentum()
 
+    # Setup a joint dataframe including all calculated features
     def create_indicator_dataframe(self):
         ''' Function which which takes the Adj Close and corresponding dates per symbol, adds a new column containing the symbol
             and joins all indicators to one dataframe
@@ -164,35 +165,14 @@ class StockDataAnalysis():
 
 
 
-def main(symbols=['APPL','GOOG','FACB'], start_date='2020-01-01', end_date='2020-12-31'):
+def main(symbols=['AAPL','GOOG','FB'], start_date='2020-01-01', end_date='2020-12-31'):
+    ''' This Function checks the class StockDataAnalysis '''
 
-    st_data = StockDataAnalysis(symbols, '2007-01-01', '2021-04-20', 12)
-
-
-    if len(sys.argv) == 4:
-
-        messages_filepath, categories_filepath, database_filepath = sys.argv[1:]
-
-        print('Loading data...\n    MESSAGES: {}\n    CATEGORIES: {}'
-              .format(messages_filepath, categories_filepath))
-        df = load_data(messages_filepath, categories_filepath)
-
-        print('Cleaning data...')
-        df = clean_data(df)
-
-        print('Saving data...\n    DATABASE: {}'.format(database_filepath))
-        save_data(df, database_filepath)
-
-        print('Cleaned data saved to database!')
-
-    else:
-        print('Please provide the filepaths of the messages and categories '\
-              'datasets as the first and second argument respectively, as '\
-              'well as the filepath of the database to save the cleaned data '\
-              'to as the third argument. \n\nExample: python process_data.py '\
-              'disaster_messages.csv disaster_categories.csv '\
-              'DisasterResponse.db')
-
+    st_data = StockDataAnalysis(symbols, start_date, end_date)
+    st_data.plot_stock_data()
+    st_data.setup_features()
+    df_indicators = st_data.create_indicator_dataframe()
+    print(df_indicators.head(50))
 
 if __name__ == '__main__':
     main()
