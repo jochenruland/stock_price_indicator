@@ -82,6 +82,7 @@ class StockDataAnalysis():
                 df[col].plot()
 
             plt.legend(loc='upper right')
+            plt.show()
 
     def calculate_rolling_stats(self, win=20):
         rm = self.data_norm.rolling(window=win).mean()
@@ -104,6 +105,11 @@ class StockDataAnalysis():
         self.momentum[win:] = (self.data[win:]/self.data[:-(win)].values) - 1
         self.momentum.iloc[0:(win),:] = 0
 
+    def setup_features(self):
+        self.calculate_rolling_stats()
+        self.calculate_bollinger_bands()
+        self.calculate_daily_returns()
+        slef.calculate_momentum()
 
     def create_indicator_dataframe(self):
         ''' Function which which takes the Adj Close and corresponding dates per symbol, adds a new column containing the symbol
@@ -158,7 +164,11 @@ class StockDataAnalysis():
 
 
 
-def main():
+def main(symbols=['APPL','GOOG','FACB'], start_date='2020-01-01', end_date='2020-12-31'):
+
+    st_data = StockDataAnalysis(symbols, '2007-01-01', '2021-04-20', 12)
+
+
     if len(sys.argv) == 4:
 
         messages_filepath, categories_filepath, database_filepath = sys.argv[1:]
