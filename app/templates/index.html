@@ -1,0 +1,23 @@
+<!-- In dieser neuen Version der Vorlage index.html verwenden Sie das
+extends 'base.html'-Tag, um von der Vorlage base.html zu erben.
+Dann erweitern Sie sie, indem Sie den content-Block in der Basisvorlage
+durch das ersetzen, was innerhalb des content-Blocks im vorherigen Codeblock enthalten ist -->
+{% extends 'base.html' %}
+
+{% block content %}
+<h3 style="margin-left:300px; margin-top:60px "> {% block title %} Enter stock ticker symbol to start analysis {% endblock %}</h3>
+
+<form style="margin-left:300px; margin-right:300px;" method="post">
+    <div class="form-group">
+        <label for="ticker"></label>
+        <input type="text" name="ticker"
+               placeholder="Stock ticker symbol" class="form-control mr-sm-2"
+               value="{{ request.form['title'] }}"></input>
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+</form>
+
+
+{% endblock %}
