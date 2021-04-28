@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, url_for, flash, redirect, jsonify
+from flask import Flask, render_template, request, url_for, flash, redirect, jsonify, session
 from werkzeug.exceptions import abort
 
 import json
@@ -29,12 +29,28 @@ def index():
         elif not end_date:
             flash('End date is required')
         else:
+            session['ticker']=ticker
+            session['start_date']=start_date
+            session['end_date']=end_date
             return redirect(url_for('post'))
 
     return render_template('index.html')
 
 @app.route('/post')
 def post():
+    ticker = session['ticker']
+    start_date = session['start_date']
+    end_date = session['end_date']
+
+    st_data = StockDataAnalysis([ticker], start_date, end_date, pred_days=7)
+    st_data.setup_features()
+    df_indicators = st_data.create_indicator_dataframe()
+    st_data.create_train_test_data(symbol=ticker, train_size=0.8)
+
+    st_model = ModelStockPrice()
+    st_model.fit(st_data)
+    print(st_model.predict(st_data))
+
     return render_template('post.html')
 
 
@@ -45,14 +61,6 @@ def post():
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
 
-    st_data = StockDataAnalysis([ticker], start_date, end_date, pred_days=7)
-    st_data.setup_features()
-    df_indicators = st_data.create_indicator_dataframe()
-    st_data.create_train_test_data(symbol=ticker, train_size=0.8)
-
-    st_model = ModelStockPrice()
-    st_model.fit(st_data)
-    print(st_model.predict(st_data))
 
 
 #-----------------------------------
