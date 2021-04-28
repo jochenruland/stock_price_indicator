@@ -165,7 +165,7 @@ class StockDataAnalysis():
 
 
 
-def main(symbols=['AAPL','GOOG','FB'], start_date='2020-01-01', end_date='2020-12-31'):
+def main(symbols=['AAPL'], start_date='2020-01-01', end_date='2020-12-31'):
     ''' This Function checks the class StockDataAnalysis '''
 
     st_data = StockDataAnalysis(symbols, start_date, end_date)
