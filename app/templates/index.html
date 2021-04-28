@@ -12,12 +12,23 @@ durch das ersetzen, was innerhalb des content-Blocks im vorherigen Codeblock ent
         <label for="ticker"></label>
         <input type="text" name="ticker"
                placeholder="Stock ticker symbol" class="form-control mr-sm-2"
-               value="{{ request.form['title'] }}"></input>
+               value="{{ request.form['ticker'] }}"></input>
+    </div>
+    <div class="form-group">
+        <label for="start_date"></label>
+        <input type="text" name="start_date"
+               placeholder="Start date" class="form-control mr-sm-2"
+               value="{{ request.form['start_date'] }}"></input>
+    </div>
+    <div class="form-group">
+        <label for="end_date"></label>
+        <input type="text" name="end_date"
+               placeholder="End date" class="form-control mr-sm-2"
+               value="{{ request.form['end_date'] }}"></input>
     </div>
     <div class="form-group">
         <button type="submit" class="btn btn-primary">Submit</button>
     </div>
 </form>
-
 
 {% endblock %}
