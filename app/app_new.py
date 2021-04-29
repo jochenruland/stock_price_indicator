@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, url_for, flash, redirect, jsonify, session
 from werkzeug.exceptions import abort
 
-import json
+import json, plotly
 import pandas as pd
 
 from data_wrangling.process_data import StockDataAnalysis
@@ -49,20 +49,43 @@ def post():
 
     st_model = ModelStockPrice()
     st_model.fit(st_data)
-    print(st_model.predict(st_data))
+    pred_values = st_model.predict(st_data)
 
-    return render_template('post.html')
+    # Creating the plots for the website
+    # 1. create a ploty graph_objs for each plot
+        # create a list of lists for x_vals and y_vals...
+        # ...if you want multiple data Series to be represented in one plot
+    # 2. put all graph_objs into a list (here it's called 'data')
+    # 3. create a dictionary for the layout (one layout dict per plot)
+    # 4. create a list (here it's called 'figures') which you fill with the 'data' list and the layout each in one dictionary
+    trace1 = go.Scatter(
+                        x = st_data.data.index,
+                        y = st_data.data[ticker],
+                        mode = "lines",
+                        name = ticker,
+                        marker = dict(color = 'rgba(16, 112, 2, 0.8)'),
+                        text='TEST')
 
+    data = [trace1]
+    layout = dict(title = 'Stock price development (Adj. Close)',
+                  xaxis= dict(title= 'time', ticklen= 5, zeroline= False)
+                 )
+
+    figures=[]
+
+    figures.append(dict(data=data, layout=layout))
+
+    # plot ids for the html id tag
+    ids = ['figure-{}'.format(i) for i, _ in enumerate(figures)]
+
+    # Convert the plotly figures to JSON for javascript in html template
+    figuresJSON = json.dumps(figures, cls=plotly.utils.PlotlyJSONEncoder)
+
+    return render_template('post.html',
+                           ids=ids,
+                           figuresJSON=figuresJSON)
 
 '''
-    post = get_post(post_id)
-
-    # extract data needed for visuals
-    genre_counts = df.groupby('genre').count()['message']
-    genre_names = list(genre_counts.index)
-
-
-
 #-----------------------------------
     # Creating trace1
     trace1 = go.Scatter(
@@ -89,67 +112,40 @@ def post():
 
 #------------------------------------------------
 
-    # encode plotly graphs in JSON
-    ids = ["graph-{}".format(i) for i, _ in enumerate(graphs)]
-    graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
-
-    # render web page with plotly graphs
-    return render_template('master.html', ids=ids, graphJSON=graphJSON)
 
 
 
-    return render_template('post.html', post=post)
 
 
 
 #------------------------------------------------------------------
 
-@app.route('/create', methods=('GET', 'POST'))
-def create():
-    if request.method == 'POST':
-        title = request.form['title']
-        content = request.form['content']
-
-        if not title:
-            flash('Title is required!')
+    def plot_stock_data(self, normalized=True):
+        if normalized:
+            df = self.data_norm
+            title_str = 'Relative stock price development'
         else:
-            conn = get_db_connection()
-            conn.execute('INSERT INTO posts (title, content) VALUES (?, ?)',
-                         (title, content))
-            conn.commit()
-            conn.close()
-            return redirect(url_for('index'))
-
-    return render_template('create.html')
-
-@app.route('/<int:id>/edit', methods=('GET', 'POST'))
-def edit(id):
-    post = get_post(id)
-
-    if request.method == 'POST':
-        title = request.form['title']
-        content = request.form['content']
-
-        if not title:
-            flash('Title is required!')
+            df = self.data
+            title_str = 'Absolute stock price development'
+        if isinstance(df, pd.Series):
+            plt.figure(figsize=(12,8))
+            ax1 = df.plot()
+            ax1.set_xlabel('time')
+            ax1.set_ylabel('price')
+            ax1.set_title(title_str)
+            plt.legend(loc='upper right')
+            plt.show()
         else:
-            conn = get_db_connection()
-            conn.execute('UPDATE posts SET title = ?, content = ?'
-                         ' WHERE id = ?',
-                         (title, content, id))
-            conn.commit()
-            conn.close()
-            return redirect(url_for('index'))
+            plt.figure(figsize=(12,18))
+            ax2 = plt.subplot(2,1,1)
+            ax2.set_xlabel('time')
+            ax2.set_ylabel('price')
+            ax2.set_title(title_str)
+            for col in df.columns:
+                df[col].plot()
 
-    return render_template('edit.html', post=post)
+            plt.legend(loc='upper right')
+            plt.show()
 
-@app.route('/<int:id>/delete', methods=('POST',))
-def delete(id):
-    post = get_post(id)
-    conn = get_db_connection()
-    conn.execute('DELETE FROM posts WHERE id = ?', (id,))
-    conn.commit()
-    conn.close()
-    flash('"{}" was successfully deleted!'.format(post['title']))
-    return redirect(url_for('index'))
+
 '''
