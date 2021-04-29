@@ -64,7 +64,7 @@ def post():
                         mode = "lines",
                         name = ticker,
                         marker = dict(color = 'rgba(16, 112, 2, 0.8)'),
-                        text='TEST')
+                        text=ticker)
 
     data = [trace1]
     layout = dict(title = 'Stock price development (Adj. Close)',
@@ -84,68 +84,3 @@ def post():
     return render_template('post.html',
                            ids=ids,
                            figuresJSON=figuresJSON)
-
-'''
-#-----------------------------------
-    # Creating trace1
-    trace1 = go.Scatter(
-                        x = df.world_rank,
-                        y = df.citations,
-                        mode = "lines",
-                        name = "citations",
-                        marker = dict(color = 'rgba(16, 112, 2, 0.8)'),
-                        text= df.university_name)
-    # Creating trace2
-    trace2 = go.Scatter(
-                        x = df.world_rank,
-                        y = df.teaching,
-                        mode = "lines+markers",
-                        name = "teaching",
-                        marker = dict(color = 'rgba(80, 26, 80, 0.8)'),
-                        text= df.university_name)
-    data = [trace1, trace2]
-    layout = dict(title = 'Citation and Teaching vs World Rank of Top 100 Universities',
-                  xaxis= dict(title= 'World Rank',ticklen= 5,zeroline= False)
-                 )
-    fig = dict(data = data, layout = layout)
-    iplot(fig)
-
-#------------------------------------------------
-
-
-
-
-
-
-
-#------------------------------------------------------------------
-
-    def plot_stock_data(self, normalized=True):
-        if normalized:
-            df = self.data_norm
-            title_str = 'Relative stock price development'
-        else:
-            df = self.data
-            title_str = 'Absolute stock price development'
-        if isinstance(df, pd.Series):
-            plt.figure(figsize=(12,8))
-            ax1 = df.plot()
-            ax1.set_xlabel('time')
-            ax1.set_ylabel('price')
-            ax1.set_title(title_str)
-            plt.legend(loc='upper right')
-            plt.show()
-        else:
-            plt.figure(figsize=(12,18))
-            ax2 = plt.subplot(2,1,1)
-            ax2.set_xlabel('time')
-            ax2.set_ylabel('price')
-            ax2.set_title(title_str)
-            for col in df.columns:
-                df[col].plot()
-
-            plt.legend(loc='upper right')
-            plt.show()
-
-
-'''
