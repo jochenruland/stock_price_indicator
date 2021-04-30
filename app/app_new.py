@@ -106,6 +106,27 @@ def post():
                   xaxis = dict(title= 'time', ticklen= 5, zeroline= False)
                  )
 
+    g3_trace1 = go.Scatter(
+                        x = st_data.daily_returns.index,
+                        y = st_data.daily_returns[ticker],
+                        mode = "lines",
+                        name = 'Daily returns',
+                        marker = dict(color = 'rgba(16, 112, 2, 0.8)'),
+                        text='Daily returns')
+
+    g3_trace2 = go.Scatter(
+                        x = st_data.momentum.index,
+                        y = st_data.momentum[ticker],
+                        mode = "lines",
+                        name = 'Momentum',
+                        marker = dict(color = 'rgba(202, 123, 87, 0.93)'),
+                        text='Momentum')
+
+    data3 = [g3_trace1, g3_trace2]
+    layout3 = dict(title = 'Daily returns & momentum 5 days',
+                  xaxis = dict(title= 'time', ticklen= 5, zeroline= False),
+                  yaxis = dict(title= '%')
+                 )
 
 
 
@@ -113,6 +134,7 @@ def post():
 
     figures.append(dict(data=data1, layout=layout1))
     figures.append(dict(data=data2, layout=layout2))
+    figures.append(dict(data=data3, layout=layout3))
 
     # plot ids for the html id tag
     ids = ['figure-{}'.format(i) for i, _ in enumerate(figures)]
