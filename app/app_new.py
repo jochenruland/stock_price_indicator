@@ -58,7 +58,7 @@ def post():
     # 2. put all graph_objs into a list (here it's called 'data')
     # 3. create a dictionary for the layout (one layout dict per plot)
     # 4. create a list (here it's called 'figures') which you fill with the 'data' list and the layout each in one dictionary
-    trace1 = go.Scatter(
+    g1_trace1 = go.Scatter(
                         x = st_data.data.index,
                         y = st_data.data[ticker],
                         mode = "lines",
@@ -66,14 +66,53 @@ def post():
                         marker = dict(color = 'rgba(16, 112, 2, 0.8)'),
                         text=ticker)
 
-    data = [trace1]
-    layout = dict(title = 'Stock price development (Adj. Close)',
-                  xaxis= dict(title= 'time', ticklen= 5, zeroline= False)
+    data1 = [g1_trace1]
+    layout1 = dict(title = 'Stock price development (Adj. Close)',
+                  xaxis = dict(title= 'time', ticklen= 5, zeroline= False),
+                  yaxis = dict(title= 'US$')
                  )
+
+    g2_trace1 = go.Scatter(
+                        x = st_data.data_norm.index,
+                        y = st_data.data_norm[ticker],
+                        mode = "lines",
+                        name = ticker,
+                        marker = dict(color = 'rgba(16, 112, 2, 0.8)'),
+                        text=ticker)
+    g2_trace2 = go.Scatter(
+                        x = st_data.daily_returns.index,
+                        y = st_data.daily_returns[ticker],
+                        mode = "lines",
+                        name = 'daily returns',
+                        marker = dict(color = 'rgba(202, 123, 87, 0.93)'),
+                        text='daily returns')
+    g2_trace3 = go.Scatter(
+                        x = st_data.upper_band.index,
+                        y = st_data.upper_band[ticker],
+                        mode = "lines",
+                        name = 'Upper band',
+                        marker = dict(color = 'rgba(202, 123, 87, 0.93)'),
+                        text='Upper band')
+    g2_trace4 = go.Scatter(
+                        x = st_data.lower_band.index,
+                        y = st_data.lower_band[ticker],
+                        mode = "lines",
+                        name = 'Lower band',
+                        marker = dict(color = 'rgba(202, 123, 87, 0.93)'),
+                        text='Lower band')
+
+    data2 = [g2_trace1, g2_trace2, g2_trace3, g2_trace4]
+    layout2 = dict(title = 'Relative stock price development (Adj. Close)',
+                  xaxis = dict(title= 'time', ticklen= 5, zeroline= False)
+                 )
+
+
+
 
     figures=[]
 
-    figures.append(dict(data=data, layout=layout))
+    figures.append(dict(data=data1, layout=layout1))
+    figures.append(dict(data=data2, layout=layout2))
 
     # plot ids for the html id tag
     ids = ['figure-{}'.format(i) for i, _ in enumerate(figures)]
