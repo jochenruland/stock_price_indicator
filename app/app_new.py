@@ -80,11 +80,11 @@ def post():
                         marker = dict(color = 'rgba(16, 112, 2, 0.8)'),
                         text=ticker)
     g2_trace2 = go.Scatter(
-                        x = st_data.daily_returns.index,
-                        y = st_data.daily_returns[ticker],
+                        x = st_data.sma.index,
+                        y = st_data.sma[ticker],
                         mode = "lines",
-                        name = 'daily returns',
-                        marker = dict(color = 'rgba(202, 123, 87, 0.93)'),
+                        name = 'SMA',
+                        marker = dict(color = 'rgba(0, 75, 175, 1)'),
                         text='daily returns')
     g2_trace3 = go.Scatter(
                         x = st_data.upper_band.index,
