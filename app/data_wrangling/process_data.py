@@ -44,14 +44,13 @@ class StockDataAnalysis():
     ''' Creates a StockDataAnalysis object which is able to take one or mutiple stock symbols and a timeframe and then computes
         a range of indicators on the stock data and plots the results'''
 
-    def __init__(self, symbols=['SPY'], start_date='2020-01-01', end_date='2020-12-31', pred_days=7):
+    def __init__(self, symbol='AAPL', start_date='2020-01-01', end_date='2021-04-16'):
         ''' Create an instance of StockDataAnalysis'''
-        self.symbols = symbols
+        self.symbol = symbol
         self.start_date = start_date
         self.end_date = end_date
-        self.pred_days = pred_days
 
-        self.data = get_data(self.symbols, self.start_date, self.end_date)
+        self.data = get_data(self.symbol, self.start_date, self.end_date)
         self.data_norm = normalize_stock_data(self.data)
 
     # Plot stock price data and check for anomalies
@@ -75,24 +74,22 @@ class StockDataAnalysis():
             plt.figure(figsize=(12,18))
             ax2 = plt.subplot(2,1,1)
             ax2.set_xlabel('time')
-            ax2.set_ylabel('price')
+            ax2.set_ylabel('price development')
             ax2.set_title(title_str)
             for col in df.columns:
                 df[col].plot()
 
             plt.legend(loc='upper right')
-            plt.show()
 
-    # Calcuate different features
-    def calculate_rolling_stats(self, win=20):
+    def calculate_rolling_stats(self, win=10):
         rm = self.data_norm.rolling(window=win).mean()
         rstd = self.data_norm.rolling(window=win).std()
         self.sma = rm.dropna()
         self.rstd = rstd.dropna()
 
     def calculate_bollinger_bands(self):
-        self.upper_band = self.sma + self.rstd*2
-        self.lower_band = self.sma - self.rstd*2
+        self.b_upper_band = self.sma + self.rstd*2
+        self.b_lower_band = self.sma - self.rstd*2
 
     def calculate_daily_returns(self):
         daily_returns = self.data.copy()
@@ -100,70 +97,61 @@ class StockDataAnalysis():
         daily_returns.iloc[0,:] = 0
         self.daily_returns = daily_returns
 
+
+    def calculate_cumulative_returns(self):
+        cumulative_returns = self.data.copy
+        cumulative_returns= (self.data/self.data.iloc[0]) - 1
+        self.cumulative_returns = cumulative_returns
+
+
     def calculate_momentum(self, win=5):
         self.momentum = self.data.copy()
         self.momentum[win:] = (self.data[win:]/self.data[:-(win)].values) - 1
         self.momentum.iloc[0:(win),:] = 0
 
-    def setup_features(self):
+
+    def get_market_index(self, market_ix='SPY'):
+        self.market_ix = market_ix
+        self.market_index = get_data(symbol=market_ix, start_date=self.start_date, end_date=self.end_date)
+
+    def setup_features(self, market_ix='SPY'):
         self.calculate_rolling_stats()
         self.calculate_bollinger_bands()
         self.calculate_daily_returns()
+        self.calculate_cumulative_returns()
         self.calculate_momentum()
+        self.get_market_index(market_ix=market_ix)
 
-    # Setup a joint dataframe including all calculated features
+
     def create_indicator_dataframe(self):
         ''' Function which which takes the Adj Close and corresponding dates per symbol, adds a new column containing the symbol
             and joins all indicators to one dataframe
             INPUT:
-            df - dataframe - contains the orginal data to analyse
+            object
             OUTPUT:
             indicator_df - dataframe - contains the Adj Close and all indicators as features tagged by the symbol '''
 
-        self.indicator_df = pd.DataFrame(columns=['Date','Symbol', 'Adj Close','Daily Returns','SMA','Momentum','Upper Band','Lower Band'])
+        self.indicator_df = pd.DataFrame(columns=['Date','Symbol', 'Adj Close','Daily Returns','Cumulative Returns','SMA', 'Momentum', 'Upper Band','Lower Band','Market Index'])
 
         for symbol in self.data.columns:
             df_temp = self.data[symbol].reset_index().rename(columns={'index':'Date', symbol:'Adj Close'})
             df_temp['Symbol'] = symbol
+
             df_temp = df_temp.join(self.daily_returns[symbol], on='Date').rename(columns={symbol:'Daily Returns'})
+            df_temp = df_temp.join(self.cumulative_returns[symbol], on='Date').rename(columns={symbol:'Cumulative Returns'})
             df_temp = df_temp.join(self.sma[symbol], on='Date').rename(columns={symbol:'SMA'})
-            df_temp = df_temp.join(self.upper_band[symbol], on='Date').rename(columns={symbol:'Upper Band'})
-            df_temp = df_temp.join(self.lower_band[symbol], on='Date').rename(columns={symbol:'Lower Band'})
             df_temp = df_temp.join(self.momentum[symbol], on='Date').rename(columns={symbol:'Momentum'})
+            df_temp = df_temp.join(self.b_upper_band[symbol], on='Date').rename(columns={symbol:'Upper Band'})
+            df_temp = df_temp.join(self.b_lower_band[symbol], on='Date').rename(columns={symbol:'Lower Band'})
+            df_temp = df_temp.join(self.market_index[self.market_ix], on='Date').rename(columns={self.market_ix:'Market Index'})
 
             self.indicator_df = pd.concat([self.indicator_df, df_temp])
 
             self.indicator_df.fillna(method='ffill', inplace=True)
             self.indicator_df.fillna(method='bfill', inplace=True)
+            self.indicator_df.dropna()
 
         return self.indicator_df
-
-    def create_train_test_data(self, symbol='SPY', train_size=0.8):
-        ''' Splits the indicator dataframe into a train and test dataset and standardizes the data of the indipendent variable
-            INPUT:
-            indicator_df - dataframe object - dataframe which contains the Adj Close and different indicators for each symbol
-            symbol - str - symbol of the listed company for which you want to predict stock price
-            train_size - float - size of train dataset
-            OUTPUT:
-            Y_train - 1d array - contains the training dataset of the dependent variable (stock price)
-            Y_test - 1d array - contains the test dataset of the dependent variable (stock price)
-            X_train - nd array - contains the training dataset of the independent variables
-            X_test - nd array - contains the test dataset of the independent variables
-            time_series_train - 1d array - selected time period of training data
-            time_series_test - 1d array - selected time period of test data
-        '''
-        train_data = int(self.indicator_df[self.indicator_df['Symbol']==symbol].shape[0] * train_size)
-        test_size = self.indicator_df[self.indicator_df['Symbol']==symbol].shape[0] - train_data
-
-        self.X_train = preprocessing.scale(self.indicator_df[self.indicator_df['Symbol']==symbol].iloc[20:train_data,3:9])
-        self.X_test = preprocessing.scale(self.indicator_df[self.indicator_df['Symbol']==symbol].iloc[train_data:,3:9])
-        self.X_pred = preprocessing.scale(self.indicator_df[self.indicator_df['Symbol']==symbol].iloc[-(self.pred_days):,3:9])
-        self.Y_train = self.indicator_df[self.indicator_df['Symbol']==symbol].iloc[20:train_data,2].values
-        self.Y_test = self.indicator_df[self.indicator_df['Symbol']==symbol].iloc[train_data:,2].values
-        self.time_series_train = self.indicator_df[self.indicator_df['Symbol']==symbol].iloc[20:train_data,0].values
-        self.time_series_test = self.indicator_df[self.indicator_df['Symbol']==symbol].iloc[train_data:,0].values
-
-
 
 def main(symbols=['AAPL'], start_date='2020-01-01', end_date='2020-12-31'):
     ''' This Function checks the class StockDataAnalysis '''
