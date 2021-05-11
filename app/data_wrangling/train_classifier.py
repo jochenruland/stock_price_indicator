@@ -8,42 +8,128 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.neighbors import KNeighborsRegressor
 
 class ModelStockPrice():
-    def __init__(self):
+    def __init__(self, start_predict=None, end_predict=None):
         '''Create an instance of the model to predict stockprice'''
-        self.knn = KNeighborsRegressor(weights='distance')
 
-        # self.model = AdaBoostRegressor(base_estimator=self.knn, random_state=42)
-        self.model = RandomForestRegressor(random_state=42, criterion='mae',
-                                             n_estimators=30, min_samples_split=5)
+        self.start_predict = start_predict
+        self.end_predict = end_predict
 
-    def fit(self, stockdata):
+        self.model = linear_model.LassoLars(alpha = 0.1)
+
+
+    def create_train_test_data(self, stockdata, train_size=0.8, start_pred='2019-05-10', end_pred='2019-05-17'):
+        ''' Splits the indicator dataframe into a train and test dataset and standardizes the data of the indipendent variable
+            INPUT:
+            indicator_df - dataframe object - dataframe which contains the Adj Close and different indicators for each symbol
+            symbol - str - symbol of the listed company for which you want to predict stock price
+            train_size - float - size of train dataset
+            start_pred - str - start date of prediction
+            end_pred - str - end date of prediction
+            OUTPUT:
+            pred_days - int - days to be predicted
+            Y_train - 1d array - contains the training dataset of the dependent variable (stock price)
+            Y_test - 1d array - contains the test dataset of the dependent variable (stock price)
+            X_train - nd array - contains the training dataset of the independent variables
+            X_test - nd array - contains the test dataset of the independent variables
+            X_predict = nd array - contains the data of the independent variable for the prediction period
+            time_series_train - 1d array - selected time period of training data
+            time_series_test - 1d array - selected time period of test data
+            time_series_test - 1d array - predicted time period
+
+        '''
+        sd = dt.datetime.strptime(start_pred, '%Y-%m-%d')
+        ed = dt.datetime.strptime(end_pred, '%Y-%m-%d')
+
+        try:
+            if sd >= ed:
+                raise ValueError('Start date beyound end date')
+            else:
+                self.pred_days = (ed-sd).days
+
+                indicator_df = stockdata.indicator_df[stockdata.indicator_df['Date'] <= start_pred]
+
+                df = stockdata.indicator_df.copy().drop(['Symbol','Date'], axis=1)
+
+                for i in range(1, self.pred_days):
+                    indicator_df=indicator_df.join(df.shift(i), rsuffix="[{} day before]".format(i))
+
+
+                train_df = indicator_df.copy().iloc[self.pred_days:] # Training data starts from the date where data for all indicators is available
+
+                if self.pred_days > 0:
+                    X = train_df.iloc[:-pred_days,3:] # Reduces the X Date by the number of pred_days at the end of the dataframe
+                    self.X_predict = preprocessing.scale(train_df.iloc[-pred_days:, 3:])
+                    Y = train_df.drop('Symbol', axis=1).iloc[pred_days:,:2] # Starts at pred_days and takes all data until the end of the dataframe
+
+                    X.fillna(method='ffill', inplace=True)
+                    X.fillna(method='bfill', inplace=True)
+
+                    Y.fillna(method='ffill', inplace=True)
+                    Y.fillna(method='bfill', inplace=True)
+
+
+                train_ct = int(X.shape[0] * train_size)
+                test_ct = X.shape[0] - train_size
+
+                self.X_train, self.X_test = preprocessing.scale(X.iloc[:train_ct]), preprocessing.scale(X.iloc[train_ct:])
+                self.Y_train, self.Y_test = Y.iloc[:train_ct]['Adj Close'].copy().tolist(), Y.iloc[train_ct:]['Adj Close'].copy().tolist()
+
+                self.time_series_train = Y.iloc[:train_ct].Date
+                self.time_series_test = Y.iloc[train_ct:].Date
+
+
+                return self.pred_days, self.X_train, self.Y_train, self.X_test, self.Y_test, self.time_series_train, self.time_series_test, X_predict
+
+
+        except ValueError:
+            raise
+
+
+    def fit(self):
         '''Fit the model with training data '''
-        self.model.fit(stockdata.X_train, stockdata.Y_train)
+        self.model.fit(self.X_train, self.Y_train)
 
-    def predict(self, stockdata):
+    def predict(self):
         '''Predict stockprice '''
-        return self.model.predict(stockdata.X_pred)
+        self.Y_predict = self.model.predict(self.X_test)
+        self.Y_future = self.model.predict(self.X_predict)
+        return self.Y_predict, self.Y_future
 
-    def evaluate_model_performance(self, stockdata, Y_pred):
+    def evaluate_model_performance(self):
         '''Evaluate prediction'''
-        rmse = np.sqrt(np.sum((stockdata.Y_test - Y_predict) **2)/len(Y_predict)) #(root mean squared error)
-        corr = np.corrcoef(x=stockdata.Y_test, y=Y_predict)
+
+        rmse = np.sqrt(np.sum((self.Y_test - self.Y_predict) **2)/len(self.Y_predict)) #(root mean squared error)
+        mse = mean_squared_error(self.Y_test, self.Y_predict)
+        corr = np.corrcoef(self.Y_test, self.Y_predict)
+        corrcoef = corr[0,1]
+        mae = mean_absolute_error(self.Y_test, self.Y_predict)
+        mape = mean_absolute_percentage_error(self.Y_test, self.Y_predict)
+        r2 = r2_score(self.Y_test, self.Y_predict)
 
         fig = plt.figure(figsize=(12,8))
 
-        plt.plot(stockdata.time_series_test, stockdata.Y_test, color='lightblue', linewidth=2, label='test data')
-        plt.plot(stockdata.time_series_test, Y_pred, color='red',  linewidth=2, label='predicted data')
+        value_days = len(self.Y_future)
+        end_date = (self.time_series_test.iloc[-1] + dt.timedelta(days=value_days+1))
+
+        time_series_future = pd.date_range(self.time_series_test.iloc[-1]+ dt.timedelta(days=2) , end_date).tolist()
+
+        plt.plot(self.time_series_test, self.Y_test, color='lightblue', linewidth=2, label='test data')
+        plt.plot(self.time_series_test, self.Y_predict.reshape(-1,1), color='red',  linewidth=2, label='predicted data')
+
+        plt.plot(time_series_future , self.Y_future.reshape(-1,1), color='green',  linewidth=2, label='future predicted data')
+
         plt.legend()
 
-        return rmse, corr
+        return print(('RMSE {} \n MSE {} \n MAE {} \n MAPE {} \n r2 {} \n CORRCOEF {} \n').format(rmse, mse, mae, mape, r2 , corrcoef))
+    
 
 
-def main(symbols=['AAPL','GOLD','FB'], start_date='2006-01-01', end_date='2021-04-27'):
+def main(symbol='AAPL', start_date='2019-01-01', end_date='2021-04-27'):
 
     st_data = StockDataAnalysis(symbols, start_date, end_date, pred_days=7)
     st_data.setup_features()
     df_indicators = st_data.create_indicator_dataframe()
-    st_data.create_train_test_data(symbol='GOLD', train_size=0.8)
+    st_data.create_train_test_data(symbol='AAPL', train_size=0.8)
 
     st_model = ModelStockPrice()
     st_model.fit(st_data)
