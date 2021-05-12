@@ -78,7 +78,7 @@ class ModelStockPrice():
                 self.time_series_test = Y.iloc[train_ct:].Date
 
 
-                return self.pred_days, self.X_train, self.Y_train, self.X_test, self.Y_test, self.time_series_train, self.time_series_test, X_predict
+                return self.pred_days, self.X_train, self.Y_train, self.X_test, self.Y_test, self.time_series_train, self.time_series_test, self.X_predict
 
 
         except ValueError:
