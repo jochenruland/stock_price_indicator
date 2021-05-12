@@ -134,8 +134,8 @@ def main(symbol='AAPL', start_date='2020-01-01', end_date='2021-04-27'):
 
     st_model = ModelStockPrice(start_predict='2021-04-28', end_predict='2021-05-07')
     st_model.create_train_test_data(st_data, train_size=0.7)
-    st_model.fit(st_data)
-    print(st_model.predict(st_data))
+    st_model.fit()
+    print(st_model.predict())
 
 if __name__ == '__main__':
     main()
