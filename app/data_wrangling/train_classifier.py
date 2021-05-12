@@ -98,7 +98,7 @@ class ModelStockPrice():
         self.Y_future = self.model.predict(self.X_predict)
         return self.Y_predict, self.Y_future
 
-    def evaluate_model_performance(self):
+    def evaluate_model_performance(self, plot_data=True):
         '''Evaluate prediction'''
 
         rmse = np.sqrt(np.sum((self.Y_test - self.Y_predict) **2)/len(self.Y_predict)) #(root mean squared error)
@@ -116,13 +116,14 @@ class ModelStockPrice():
 
         time_series_future = pd.date_range(self.time_series_test.iloc[-1]+ dt.timedelta(days=2) , end_date).tolist()
 
-        plt.plot(self.time_series_test, self.Y_test, color='lightblue', linewidth=2, label='test data')
-        plt.plot(self.time_series_test, self.Y_predict.reshape(-1,1), color='red',  linewidth=2, label='predicted data')
+        if plot_data:
+            plt.plot(self.time_series_test, self.Y_test, color='lightblue', linewidth=2, label='test data')
+            plt.plot(self.time_series_test, self.Y_predict.reshape(-1,1), color='red',  linewidth=2, label='predicted data')
 
-        plt.plot(time_series_future , self.Y_future.reshape(-1,1), color='green',  linewidth=2, label='future predicted data')
+            plt.plot(time_series_future , self.Y_future.reshape(-1,1), color='green',  linewidth=2, label='future predicted data')
 
-        plt.legend()
-        plt.show()
+            plt.legend()
+            plt.show()
 
         return print(('RMSE {} \n MSE {} \n MAE {} \n MAPE {} \n r2 {} \n CORRCOEF {} \n').format(rmse, mse, mae, mape, r2 , corrcoef))
 
