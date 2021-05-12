@@ -1,11 +1,10 @@
 import sys
-from data_wrangling.process_data import StockDataAnalysis
+from process_data import StockDataAnalysis
 
 from sklearn import preprocessing
-from sklearn.svm import SVR
-from sklearn.ensemble import AdaBoostRegressor
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.neighbors import KNeighborsRegressor
+from sklearn import linear_model
+
+from sklearn.metrics import mean_squared_error, mean_absolute_error, mean_absolute_percentage_error, r2_score
 
 class ModelStockPrice():
     def __init__(self, start_predict=None, end_predict=None):
@@ -119,19 +118,21 @@ class ModelStockPrice():
         plt.plot(time_series_future , self.Y_future.reshape(-1,1), color='green',  linewidth=2, label='future predicted data')
 
         plt.legend()
+        plt.show()
 
         return print(('RMSE {} \n MSE {} \n MAE {} \n MAPE {} \n r2 {} \n CORRCOEF {} \n').format(rmse, mse, mae, mape, r2 , corrcoef))
-    
 
 
-def main(symbol='AAPL', start_date='2019-01-01', end_date='2021-04-27'):
 
-    st_data = StockDataAnalysis(symbols, start_date, end_date, pred_days=7)
+def main(symbol='AAPL', start_date='2020-01-01', end_date='2021-04-27'):
+
+    st_data = StockDataAnalysis(start_date=start_date, end_date=end_date)
     st_data.setup_features()
     df_indicators = st_data.create_indicator_dataframe()
-    st_data.create_train_test_data(symbol='AAPL', train_size=0.8)
+    print(df_indicators.head(50))
 
-    st_model = ModelStockPrice()
+    st_model = ModelStockPrice(start_predict='2021-04-28', end_predict='2021-05-07')
+    st_model.create_train_test_data(st_data, self.start_predict, self.end_predict)
     st_model.fit(st_data)
     print(st_model.predict(st_data))
 
