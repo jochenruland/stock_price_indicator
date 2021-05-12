@@ -2,6 +2,7 @@ import sys
 from process_data import StockDataAnalysis
 import datetime as dt
 import numpy as np
+import matplotlib as plt
 
 from sklearn import preprocessing
 from sklearn import linear_model
