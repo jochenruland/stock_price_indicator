@@ -46,7 +46,7 @@ class ModelStockPrice():
             else:
                 self.pred_days = (ed-sd).days
 
-                indicator_df = stockdata.indicator_df[stockdata.indicator_df['Date'] <= start_pred]
+                indicator_df = stockdata.indicator_df[stockdata.indicator_df['Date'] <= start_predict]
 
                 df = stockdata.indicator_df.copy().drop(['Symbol','Date'], axis=1)
 
