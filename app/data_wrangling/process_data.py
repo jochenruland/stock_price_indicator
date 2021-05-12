@@ -78,8 +78,8 @@ class StockDataAnalysis():
             ax2.set_title(title_str)
             for col in df.columns:
                 df[col].plot()
-
             plt.legend(loc='upper right')
+            plt.show()
 
     def calculate_rolling_stats(self, win=10):
         rm = self.data_norm.rolling(window=win).mean()
@@ -157,10 +157,10 @@ def main(symbol='AAPL', start_date='2020-01-01', end_date='2020-12-31'):
     ''' This Function tries out the class StockDataAnalysis '''
 
     st_data = StockDataAnalysis()
-    st_data.plot_stock_data()
     st_data.setup_features()
     df_indicators = st_data.create_indicator_dataframe()
     print(df_indicators.head(50))
+    st_data.plot_stock_data(normalized=False)
 
 if __name__ == '__main__':
     main()
