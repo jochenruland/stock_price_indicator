@@ -1,6 +1,7 @@
 import sys
 from process_data import StockDataAnalysis
 import datetime as dt
+import numpy as np
 
 from sklearn import preprocessing
 from sklearn import linear_model
@@ -136,6 +137,7 @@ def main(symbol='AAPL', start_date='2020-01-01', end_date='2021-04-27'):
     st_model.create_train_test_data(st_data, train_size=0.7)
     st_model.fit()
     print(st_model.predict())
+    st_model.evaluate_model_performance()
 
 if __name__ == '__main__':
     main()
