@@ -8,12 +8,12 @@ from sklearn import preprocessing
 
 # Import data from Yahoo finance
 
-def get_data(symbols=['SPY'], start_date='2020-01-01', end_date='2020-12-31'):
+def get_data(symbol='AAPL', start_date='2020-01-01', end_date='2020-12-31'):
     '''
     Setup of an empty dataframe with the given timeperiod as index to be used as instance for further gathered data.
     Then downloads the data from Yahoo Finance for the selected symbol(s) and time period and selects the Adj Close column
     INPUT:
-    symbols - list - symbols of listed stocks
+    symbols - str - symbol of listed stocks
     start_date - datetime - Beginning of the period to analyze
     end_date - datetime - End of the period to analyze
 
@@ -23,13 +23,13 @@ def get_data(symbols=['SPY'], start_date='2020-01-01', end_date='2020-12-31'):
     dates= pd.date_range(start_date, end_date)
     df = pd.DataFrame(index=dates)
 
-    for symbol in symbols:
-        df_tmp = yf.download(symbol, start_date, end_date)
-        df_tmp = df_tmp[['Adj Close']]
-        df_tmp = df_tmp.rename(columns={"Adj Close": symbol})
 
-        df = df.join(df_tmp)
-        df = df.dropna()
+    df_tmp = yf.download(symbol, start_date, end_date)
+    df_tmp = df_tmp[['Adj Close']]
+    df_tmp = df_tmp.rename(columns={"Adj Close": symbol})
+
+    df = df.join(df_tmp)
+    df = df.dropna()
 
     return df
 
@@ -153,10 +153,10 @@ class StockDataAnalysis():
 
         return self.indicator_df
 
-def main(symbols=['AAPL'], start_date='2020-01-01', end_date='2020-12-31'):
-    ''' This Function checks the class StockDataAnalysis '''
+def main(symbol='AAPL', start_date='2020-01-01', end_date='2020-12-31'):
+    ''' This Function tries out the class StockDataAnalysis '''
 
-    st_data = StockDataAnalysis(symbols, start_date, end_date)
+    st_data = StockDataAnalysis()
     st_data.plot_stock_data()
     st_data.setup_features()
     df_indicators = st_data.create_indicator_dataframe()
