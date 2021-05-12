@@ -37,8 +37,8 @@ class ModelStockPrice():
             time_series_test - 1d array - predicted time period
 
         '''
-        sd = dt.datetime.strptime(self.start_pred, '%Y-%m-%d')
-        ed = dt.datetime.strptime(self.end_pred, '%Y-%m-%d')
+        sd = dt.datetime.strptime(self.start_predict, '%Y-%m-%d')
+        ed = dt.datetime.strptime(self.end_predict, '%Y-%m-%d')
 
         try:
             if sd >= ed:
