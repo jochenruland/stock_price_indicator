@@ -57,9 +57,9 @@ class ModelStockPrice():
                 train_df = indicator_df.copy().iloc[self.pred_days:] # Training data starts from the date where data for all indicators is available
 
                 if self.pred_days > 0:
-                    X = train_df.iloc[:-pred_days,3:] # Reduces the X Date by the number of pred_days at the end of the dataframe
-                    self.X_predict = preprocessing.scale(train_df.iloc[-pred_days:, 3:])
-                    Y = train_df.drop('Symbol', axis=1).iloc[pred_days:,:2] # Starts at pred_days and takes all data until the end of the dataframe
+                    X = train_df.iloc[:-self.pred_days,3:] # Reduces the X Date by the number of pred_days at the end of the dataframe
+                    self.X_predict = preprocessing.scale(train_df.iloc[-self.pred_days:, 3:])
+                    Y = train_df.drop('Symbol', axis=1).iloc[self.pred_days:,:2] # Starts at pred_days and takes all data until the end of the dataframe
 
                     X.fillna(method='ffill', inplace=True)
                     X.fillna(method='bfill', inplace=True)
