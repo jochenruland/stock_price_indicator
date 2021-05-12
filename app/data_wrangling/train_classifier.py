@@ -1,5 +1,5 @@
 import sys
-from process_data import StockDataAnalysis
+from data_wrangling.process_data import StockDataAnalysis
 import datetime as dt
 import numpy as np
 import matplotlib.pyplot as plt
@@ -128,7 +128,7 @@ class ModelStockPrice():
 
 
 
-def main(symbol='AAPL', start_date='2020-01-01', end_date='2021-04-27'):
+def main(symbol='AAPL', start_date='2020-11-01', end_date='2021-04-27'):
 
     st_data = StockDataAnalysis(start_date=start_date, end_date=end_date)
     st_data.setup_features()

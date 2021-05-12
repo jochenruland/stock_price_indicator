@@ -42,14 +42,14 @@ def post():
     start_date = session['start_date']
     end_date = session['end_date']
 
-    st_data = StockDataAnalysis([ticker], start_date, end_date, pred_days=7)
+    st_data = StockDataAnalysis(ticker, start_date, end_date)
     st_data.setup_features()
     df_indicators = st_data.create_indicator_dataframe()
-    st_data.create_train_test_data(symbol=ticker, train_size=0.8)
+    #st_data.create_train_test_data(symbol=ticker, train_size=0.8)
 
-    st_model = ModelStockPrice()
-    st_model.fit(st_data)
-    pred_values = st_model.predict(st_data)
+    #st_model = ModelStockPrice()
+    #st_model.fit(st_data)
+    #pred_values = st_model.predict(st_data)
 
     # Creating the plots for the website
     # 1. create a ploty graph_objs for each plot
@@ -87,15 +87,15 @@ def post():
                         marker = dict(color = 'rgba(0, 75, 175, 1)'),
                         text='daily returns')
     g2_trace3 = go.Scatter(
-                        x = st_data.upper_band.index,
-                        y = st_data.upper_band[ticker],
+                        x = st_data.b_upper_band.index,
+                        y = st_data.b_upper_band[ticker],
                         mode = "lines",
                         name = 'Upper band',
                         marker = dict(color = 'rgba(202, 123, 87, 0.93)'),
                         text='Upper band')
     g2_trace4 = go.Scatter(
-                        x = st_data.lower_band.index,
-                        y = st_data.lower_band[ticker],
+                        x = st_data.b_lower_band.index,
+                        y = st_data.b_lower_band[ticker],
                         mode = "lines",
                         name = 'Lower band',
                         marker = dict(color = 'rgba(202, 123, 87, 0.93)'),
