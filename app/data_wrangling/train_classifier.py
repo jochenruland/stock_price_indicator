@@ -16,7 +16,7 @@ class ModelStockPrice():
         self.model = linear_model.LassoLars(alpha = 0.1)
 
 
-    def create_train_test_data(self, stockdata, train_size=0.8, start_pred='2019-05-10', end_pred='2019-05-17'):
+    def create_train_test_data(self, stockdata, train_size=0.8):
         ''' Splits the indicator dataframe into a train and test dataset and standardizes the data of the indipendent variable
             INPUT:
             indicator_df - dataframe object - dataframe which contains the Adj Close and different indicators for each symbol
@@ -36,8 +36,8 @@ class ModelStockPrice():
             time_series_test - 1d array - predicted time period
 
         '''
-        sd = dt.datetime.strptime(start_pred, '%Y-%m-%d')
-        ed = dt.datetime.strptime(end_pred, '%Y-%m-%d')
+        sd = dt.datetime.strptime(self.start_pred, '%Y-%m-%d')
+        ed = dt.datetime.strptime(self.end_pred, '%Y-%m-%d')
 
         try:
             if sd >= ed:
