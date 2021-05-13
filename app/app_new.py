@@ -54,7 +54,7 @@ def post():
     st_model = ModelStockPrice(start_predict=start_pred, end_predict=end_pred)
     st_model.create_train_test_data(st_data, train_size=0.7)
     st_model.fit()
-    Y_predict = st_model.predict()
+    Y_predict, Y_future = st_model.predict()
     evaluation_result = st_model.evaluate_model_performance(plot_data=False)
 
 
@@ -152,4 +152,5 @@ def post():
     return render_template('post.html',
                            ids=ids,
                            figuresJSON=figuresJSON,
+                           Y_future =Y_future,
                            evaluation_result=evaluation_result)
