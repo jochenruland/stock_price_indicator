@@ -11,11 +11,14 @@ from sklearn import linear_model
 from sklearn.metrics import mean_squared_error, mean_absolute_error, mean_absolute_percentage_error, r2_score
 
 class ModelStockPrice():
-    def __init__(self, start_predict=None, end_predict=None):
+    def __init__(self, start_predict, end_predict):
         '''Create an instance of the model to predict stockprice'''
-
-        self.start_predict = dt.datetime.strptime(start_predict, '%Y-%m-%d')
-        self.end_predict = dt.datetime.strptime(end_predict, '%Y-%m-%d')
+        if isinstance(start_predict, str):
+            self.start_predict = dt.datetime.strptime(start_predict, '%Y-%m-%d')
+            self.end_predict = dt.datetime.strptime(end_predict, '%Y-%m-%d')
+        else:
+            self.start_predict = start_predict
+            self.end_predict = end_predict
 
         self.model = linear_model.LassoLars(alpha = 0.1)
 
