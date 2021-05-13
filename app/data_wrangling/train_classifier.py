@@ -14,8 +14,8 @@ class ModelStockPrice():
     def __init__(self, start_predict=None, end_predict=None):
         '''Create an instance of the model to predict stockprice'''
 
-        self.start_predict = start_predict
-        self.end_predict = end_predict
+        self.start_predict = dt.datetime.strptime(start_predict, '%Y-%m-%d')
+        self.end_predict = dt.datetime.strptime(end_predict, '%Y-%m-%d')
 
         self.model = linear_model.LassoLars(alpha = 0.1)
 
@@ -40,8 +40,8 @@ class ModelStockPrice():
             time_series_test - 1d array - predicted time period
 
         '''
-        sd = dt.datetime.strptime(self.start_predict, '%Y-%m-%d')
-        ed = dt.datetime.strptime(self.end_predict, '%Y-%m-%d')
+        sd = self.start_predict
+        ed = self.end_predict
 
         try:
             if sd >= ed:
@@ -125,7 +125,7 @@ class ModelStockPrice():
             plt.legend()
             plt.show()
 
-        return print(('RMSE {} \n MSE {} \n MAE {} \n MAPE {} \n r2 {} \n CORRCOEF {} \n').format(rmse, mse, mae, mape, r2 , corrcoef))
+        return ('RMSE {} \n MSE {} \n MAE {} \n MAPE {} \n r2 {} \n CORRCOEF {} \n').format(rmse, mse, mae, mape, r2 , corrcoef)
 
 
 
