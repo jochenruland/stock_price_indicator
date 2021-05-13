@@ -47,10 +47,11 @@ def post():
     st_data.setup_features()
     df_indicators = st_data.create_indicator_dataframe()
 
+
     start_pred = (st_data.end_date + dt.timedelta(days=1))
     end_pred = (st_data.end_date + dt.timedelta(days=7))
 
-    st_model = ModelStockPrice(start_predict=start_pred, end_predict=end_pred)
+    st_model = ModelStockPrice(start_predict=str(start_pred), end_predict=str(end_pred))
     st_model.create_train_test_data(st_data, train_size=0.7)
     st_model.fit()
     Y_predict = st_model.predict()

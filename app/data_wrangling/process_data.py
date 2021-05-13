@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import yfinance as yf
-from sklearn import preprocessing
+import datetime as dt
 
 # Import data from Yahoo finance
 
@@ -47,8 +47,13 @@ class StockDataAnalysis():
     def __init__(self, symbol='AAPL', start_date='2020-01-01', end_date='2021-04-16'):
         ''' Create an instance of StockDataAnalysis'''
         self.symbol = symbol
-        self.start_date = start_date
-        self.end_date = end_date
+
+        if isinstance(start_date, str):
+            self.start_date = dt.datetime.strptime(start_date, '%Y-%m-%d')
+            self.end_date = dt.datetime.strptime(end_date, '%Y-%m-%d')
+        else:
+            self.start_date = start_date
+            self.end_date = end_date
 
         self.data = get_data(self.symbol, self.start_date, self.end_date)
         self.data_norm = normalize_stock_data(self.data)
@@ -156,7 +161,7 @@ class StockDataAnalysis():
 def main(symbol='AAPL', start_date='2020-01-01', end_date='2020-12-31'):
     ''' This Function tries out the class StockDataAnalysis '''
 
-    st_data = StockDataAnalysis()
+    st_data = StockDataAnalysis(start_date=start_date, end_date=end_date)
     st_data.setup_features()
     df_indicators = st_data.create_indicator_dataframe()
     print(df_indicators.head(50))
