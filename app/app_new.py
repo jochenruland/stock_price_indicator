@@ -32,8 +32,8 @@ def index():
         else:
             if start_date >= end_date:
                 flash('Start date must be before end date')
-            elif (dt.datetime.strptime(end_date, '%Y-%m-%d') - dt.datetime.strptime(start_date, '%Y-%m-%d')).days < 7:
-                flash('Timeframe between start date and end date must be minimum 7 days')
+            elif (dt.datetime.strptime(end_date, '%Y-%m-%d') - dt.datetime.strptime(start_date, '%Y-%m-%d')).days < 30:
+                flash('Timeframe between start date and end date must be minimum 30 days')
             elif dt.datetime.strptime(end_date, '%Y-%m-%d') > dt.datetime.now():
                 flash('End date must be equal or before actual date')
             else:
