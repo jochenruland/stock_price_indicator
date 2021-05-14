@@ -56,7 +56,8 @@ class StockDataAnalysis():
             self.end_date = end_date
 
         self.data = get_data(self.symbol, self.start_date, self.end_date)
-        self.data_norm = normalize_stock_data(self.data)
+        if self.data.shape[0] != 0:
+            self.data_norm = normalize_stock_data(self.data)
 
     # Plot stock price data and check for anomalies
 
