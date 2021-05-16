@@ -47,7 +47,7 @@
             </div>
         </div>
 
-        <<div class="row">
+        <div class="row">
           <h3>Prediction of the next 6 trading days</h3>
           <p></p>
           <table class="table">
@@ -58,39 +58,32 @@
               </tr>
             </thead>
             <tbody>
+              {% for pred_val in pred_vals %}
               <tr>
-                <td><div id="{{pred_ids[1]}}"></div></td>
-                <td>x1</td>
-              </tr>
-              <tr>
-                <td><div id="{{pred_ids[2]}}"></div></td>
-                <td>x2</td>
-              </tr>
-              <tr>
-                <td><div id="{{pred_ids[3]}}"></div></td>
-                <td>x3</td>
-              </tr>
-              <tr>
-                <td><div id="{{pred_ids[4]}}"></div></td>
-                <td>x4</td>
-              </tr>
-              <tr>
-                <td><div id="{{pred_ids[5]}}"></div></td>
-                <td>x5</td>
-              </tr>
-              <tr>
-                <td><div id="{{pred_ids[6]}}"></div></td>
-                <td>x6</td>
-              </tr>
-
-              {% for pred_id in pred_ids %}
-              <tr>
-                <td><div id="{{pred_id[1]}}"></div></td>
-                <td>pred_id</td>
-                <td>YY</td>
+                <td>{{pred_val['day']}}</td>
+                <td>{{pred_val['Y_val']}}</td>
               </tr>
               {% endfor %}
 
+            </tbody>
+          </table>
+        </div>
+
+        <div class="row">
+          <h3>Performance of the underlying model</h3>
+          <p></p>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Performance indicator</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{pred_val['day']}}</td>
+                <td>{{pred_val['Y_val']}}</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -111,8 +104,6 @@
                     figures[i].data,
                     figures[i].layout || {});
             }
-
-            var pred_ids = {{pred_ids | safe}};
         </script>
 
     </footer>
