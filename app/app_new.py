@@ -157,6 +157,7 @@ def post():
 
         # plot ids for the html id tag
         ids = ['figure-{}'.format(i) for i, _ in enumerate(figures)]
+        pred_ids = ['day-{}'.format(i) for i, _ in enumerate(Y_future)]
 
         # Convert the plotly figures to JSON for javascript in html template
         figuresJSON = json.dumps(figures, cls=plotly.utils.PlotlyJSONEncoder)
@@ -164,5 +165,6 @@ def post():
         return render_template('post.html',
                                ids=ids,
                                figuresJSON=figuresJSON,
+                               pred_ids = pred_ids,
                                Y_future =Y_future,
                                evaluation_result=evaluation_result)
