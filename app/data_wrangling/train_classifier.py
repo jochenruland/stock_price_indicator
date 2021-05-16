@@ -116,7 +116,7 @@ class ModelStockPrice():
         result_list.append(dict(indicator='Root Mean Squard Error', val=rmse))
         result_list.append(dict(indicator='Mean Squard Error', val=mse))
         result_list.append(dict(indicator='Correlation', val=corrcoef))
-        result_list.append(dict(indicator='Mean Absolute Error', val=mae))
+        result_list.append(dict(indicator='MeanAbsolute Error', val=mae))
         result_list.append(dict(indicator='Mean Absolute Percentage Error', val=mape))
         result_list.append(dict(indicator='R2 Score', val=r2))
 
@@ -141,6 +141,7 @@ class ModelStockPrice():
 
 
 def main(symbol='AAPL', start_date='2020-11-01', end_date='2021-04-27'):
+    from process_data import StockDataAnalysis
 
     st_data = StockDataAnalysis(start_date=start_date, end_date=end_date)
     st_data.setup_features()

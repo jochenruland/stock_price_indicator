@@ -160,7 +160,7 @@ class StockDataAnalysis():
         return self.indicator_df
 
 def main(symbol='AAPL', start_date='2020-01-01', end_date='2020-12-31'):
-    ''' This Function tries out the class StockDataAnalysis '''
+    ''' This Function creates an instance of the StockDataAnalysis class and plots the result '''
 
     st_data = StockDataAnalysis(start_date=start_date, end_date=end_date)
     st_data.setup_features()
