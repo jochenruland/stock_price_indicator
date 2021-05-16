@@ -88,7 +88,7 @@ def post():
         data1 = [g1_trace1]
         layout1 = dict(title = 'Stock price development (Adj. Close)',
                       xaxis = dict(title= 'time', ticklen= 5, zeroline= False),
-                      yaxis = dict(title= 'US$')
+                      yaxis = dict(title= 'Currency (dep. on symbol)')
                      )
 
         g2_trace1 = go.Scatter(
@@ -142,9 +142,8 @@ def post():
                             text='Momentum')
 
         data3 = [g3_trace1, g3_trace2]
-        layout3 = dict(title = 'Daily returns & momentum 5 days',
-                      xaxis = dict(title= 'time', ticklen= 5, zeroline= False),
-                      yaxis = dict(title= '%')
+        layout3 = dict(title = 'Relative change in daily returns & momentum 5 days',
+                      xaxis = dict(title= 'time', ticklen= 5, zeroline= False)
                      )
 
 

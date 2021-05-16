@@ -112,6 +112,14 @@ class ModelStockPrice():
         mape = mean_absolute_percentage_error(self.Y_test, self.Y_predict)
         r2 = r2_score(self.Y_test, self.Y_predict)
 
+        result_list = []
+        result_list.append(dict(indicator='Root Mean Squard Error', val=rmse))
+        result_list.append(dict(indicator='Mean Squard Error', val=mse))
+        result_list.append(dict(indicator='Correlation', val=corrcoef))
+        result_list.append(dict(indicator='Mean Absolute Error', val=mae))
+        result_list.append(dict(indicator='Mean Absolute Percentage Error', val=mape))
+        result_list.append(dict(indicator='R2 Score', val=r2))
+
         fig = plt.figure(figsize=(12,8))
 
         value_days = len(self.Y_future)
@@ -128,7 +136,7 @@ class ModelStockPrice():
             plt.legend()
             plt.show()
 
-        return ('RMSE {} \n MSE {} \n MAE {} \n MAPE {} \n r2 {} \n CORRCOEF {} \n').format(rmse, mse, mae, mape, r2 , corrcoef)
+        return result_list
 
 
 
