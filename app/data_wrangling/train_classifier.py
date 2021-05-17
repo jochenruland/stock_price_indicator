@@ -113,10 +113,10 @@ class ModelStockPrice():
         r2 = r2_score(self.Y_test, self.Y_predict)
 
         result_list = []
-        result_list.append(dict(indicator='Root Mean Squard Error', val=rmse))
-        result_list.append(dict(indicator='Mean Squard Error', val=mse))
+        result_list.append(dict(indicator='Root Mean Squared Error', val=rmse))
+        result_list.append(dict(indicator='Mean Squared Error', val=mse))
         result_list.append(dict(indicator='Correlation', val=corrcoef))
-        result_list.append(dict(indicator='MeanAbsolute Error', val=mae))
+        result_list.append(dict(indicator='Mean Absolute Error', val=mae))
         result_list.append(dict(indicator='Mean Absolute Percentage Error', val=mape))
         result_list.append(dict(indicator='R2 Score', val=r2))
 
