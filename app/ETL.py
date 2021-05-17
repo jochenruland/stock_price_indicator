@@ -28,7 +28,7 @@ def main(symbol='AAPL'):
     else:
         print('Enter a comma seperated list of ticker symbols (f.ex. AAPL,GOOG,BABA):')
         symbols_str = input()
-        symbol_lst = symbols_str.strip(' ').split(",")
+        symbol_lst = symbols_str.replace(" ", "").split(",")
 
     if not symbol_lst:
         return print("No ticker symbol was entered")
@@ -38,11 +38,11 @@ def main(symbol='AAPL'):
             st_data = StockDataAnalysis(symbol=s,start_date=sd, end_date=ed)
             if st_data.data.shape[0] == 0:
                 print('No data could be found for ticker symbol {}'.format(s))
-            else
+            else:
                 st_data.setup_features()
                 df_indicators = st_data.create_indicator_dataframe()
                 conn = sqlite3.connect('indicators.db')
-                df_indicators.to_sql('s', con = conn, if_exists='replace', index=False)
+                df_indicators.to_sql(s, con = conn, if_exists='replace', index=False)
                 print('Stock data for {} has been saved to indicators.db'.format(s))
 
 if __name__ == '__main__':
