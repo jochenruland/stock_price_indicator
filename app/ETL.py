@@ -36,12 +36,14 @@ def main(symbol='AAPL'):
         for s in symbol_lst:
             s=s.upper()
             st_data = StockDataAnalysis(symbol=s,start_date=sd, end_date=ed)
-            st_data.setup_features()
-            df_indicators = st_data.create_indicator_dataframe()
-            conn = sqlite3.connect('indicators.db')
-            df_indicators.to_sql('s', con = conn, if_exists='replace', index=False)
-
-        print('Stock data has been saved to indicators.db')
+            if st_data.data.shape[0] == 0:
+                print('No data could be found for ticker symbol {}'.format(s))
+            else
+                st_data.setup_features()
+                df_indicators = st_data.create_indicator_dataframe()
+                conn = sqlite3.connect('indicators.db')
+                df_indicators.to_sql('s', con = conn, if_exists='replace', index=False)
+                print('Stock data for {} has been saved to indicators.db'.format(s))
 
 if __name__ == '__main__':
     main()
