@@ -3,6 +3,7 @@ import pandas as pd
 import datetime as dt
 import numpy as np
 import matplotlib.pyplot as plt
+import sqlite3
 
 from data_wrangling.process_data import StockDataAnalysis
 from data_wrangling.train_classifier import ModelStockPrice
@@ -27,18 +28,30 @@ def main(symbol='AAPL'):
     else:
         print('Enter a comma seperated list of ticker symbols (f.ex. AAPL,GOOG,BABA):')
         symbols_str = input()
-        symbol_lst = symbols_str.split(",")
+        symbol_lst = symbols_str.strip(' ').split(",")
 
     if not symbol_lst:
         return print("No ticker symbol was entered")
     else:
-        for symbol in symbol_lst:
-            return print(symbol)
+        data_lst=[]
+        for s in symbol_lst:
+            s=s.upper()
+            st_data = StockDataAnalysis(symbol=s,start_date=sd, end_date=ed)
+            st_data.setup_features()
+            df_indicators = st_data.create_indicator_dataframe()
+            data_lst.append(dict(symbol = s, data = df_indicators ))
+            conn = sqlite3.connect('indicators.db')
+            df_indicators.to_sql('s', con = conn, if_exists='replace', index=False)
 
-    #st_data = StockDataAnalysis(start_date=start_date, end_date=end_date)
-    #st_data.setup_features()
+        print(data_lst)
 
-    #print(df_indicators.head(50))
+
+    #print('Enter a comma seperated list of ticker symbols, \n you want to make predictions for (all or subset of previous list):')
+    #pred_str = input()
+    #pred_lst = pred_str.strip(' ').split(",")
+
+    #print('Enter a start date for predictions:')
+
 
     #st_model = ModelStockPrice(start_predict='2021-04-28', end_predict='2021-05-07')
     #st_model.create_train_test_data(st_data, train_size=0.7)
