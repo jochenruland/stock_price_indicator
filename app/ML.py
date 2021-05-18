@@ -38,14 +38,24 @@ def main(symbol='AAPL'):
         for s in symbol_lst:
             s=s.upper()
             indicators_df = pd.read_sql('SELECT * FROM {}'.format(s), conn)
-            print(indicators_df.head())
 
-    st_model = ModelStockPrice(start_predict=sd, end_predict=ed)
-    #st_model.create_train_test_data(st_data, train_size=0.7)
-    #st_model.fit()
-    #print(st_model.predict())
-    #result = st_model.evaluate_model_performance()
-    #print(result)
+            st_model = ModelStockPrice(start_predict=sd, end_predict=ed)
+
+            st_model.create_train_test_data(indicators_df, train_size=0.7)
+            st_model.fit()
+
+            predict, future = st_model.predict()
+            print('\n','Symbol:{}'.format(s),'\n')
+
+            print('Trad.Day  Price\n-----------------------------------')
+            for i in range(len(future)):
+                print("Day {} :   {}".format(i, future[i]))
+
+            result = st_model.evaluate_model_performance()
+            print('\n','Evaluation of underlying model\n-----------------------------------')
+            for r in result:
+                print(r['indicator'],':   ', r['val'])
+            print('\n')
 
 if __name__ == '__main__':
     main()
