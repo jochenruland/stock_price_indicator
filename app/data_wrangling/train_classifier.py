@@ -51,6 +51,7 @@ class ModelStockPrice():
                 raise ValueError('Start date beyound end date')
             else:
                 self.pred_days = (ed-sd).days
+                self.symbol = indicator_df['Symbol'].iloc[0]
 
                 indicator_df['Date']=pd.to_datetime(indicator_df['Date'])
                 indicators = indicator_df[indicator_df['Date'] <= self.start_predict]
@@ -134,6 +135,9 @@ class ModelStockPrice():
 
             plt.plot(time_series_future , self.Y_future.reshape(-1,1), color='green',  linewidth=2, label='future predicted data')
 
+            plt.title('Test data and predicted data for {}'.format(self.symbol))
+            plt.xlabel('Time')
+            plt.ylabel('Stock Price')
             plt.legend()
             plt.show()
 
