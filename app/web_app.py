@@ -64,7 +64,7 @@ def post():
         end_pred = (st_data.end_date + dt.timedelta(days=7))
 
         st_model = ModelStockPrice(start_predict=start_pred, end_predict=end_pred)
-        st_model.create_train_test_data(st_data, train_size=0.7)
+        st_model.create_train_test_data(df_indicators, train_size=0.7)
         st_model.fit()
         Y_predict, Y_future = st_model.predict()
         evaluation_result = st_model.evaluate_model_performance(plot_data=False)

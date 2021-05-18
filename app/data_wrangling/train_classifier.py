@@ -23,7 +23,7 @@ class ModelStockPrice():
         self.model = linear_model.LassoLars(alpha = 0.1)
 
 
-    def create_train_test_data(self, stockdata, train_size=0.8):
+    def create_train_test_data(self, indicator_df, train_size=0.8):
         ''' Splits the indicator dataframe into a train and test dataset and standardizes the data of the indipendent variable
             INPUT:
             indicator_df - dataframe object - dataframe which contains the Adj Close and different indicators for each symbol
@@ -52,15 +52,15 @@ class ModelStockPrice():
             else:
                 self.pred_days = (ed-sd).days
 
-                indicator_df = stockdata.indicator_df[stockdata.indicator_df['Date'] <= self.start_predict]
+                indicators = indicator_df[indicator_df['Date'] <= self.start_predict]
 
-                df = stockdata.indicator_df.copy().drop(['Symbol','Date'], axis=1)
+                df = indicator_df.copy().drop(['Symbol','Date'], axis=1)
 
                 for i in range(1, self.pred_days):
-                    indicator_df=indicator_df.join(df.shift(i), rsuffix="[{} day before]".format(i))
+                    indicators=indicators.join(df.shift(i), rsuffix="[{} day before]".format(i))
 
 
-                train_df = indicator_df.copy().iloc[self.pred_days:] # Training data starts from the date where data for all indicators is available
+                train_df = indicators.copy().iloc[self.pred_days:] # Training data starts from the date where data for all indicators is available
 
                 if self.pred_days > 0:
                     X = train_df.iloc[:-self.pred_days,3:] # Reduces the X Date by the number of pred_days at the end of the dataframe
