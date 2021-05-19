@@ -104,7 +104,15 @@ class ModelStockPrice():
         return self.Y_predict, self.Y_future
 
     def evaluate_model_performance(self, plot_data=True):
-        '''Evaluate prediction'''
+        ''' Function that generates different performance indicators comparing test data and the predicted data
+            and plots the data
+            INPUT:
+            Y_test - 1d array - contains the test dataset of the dependent variable (stock price)
+            Y_predict - 1d array - contains the predicted dataset of the dependent variable (stock price) for the test period
+            Y_future - 1d array - contains the predicted dataset of the dependent variable (stock price) for a future period
+            time_series_test - 1d array - selected time period of test data
+            plot_data - boolean - if False data will not be plotted 
+        '''
 
         rmse = np.sqrt(np.sum((self.Y_test - self.Y_predict) **2)/len(self.Y_predict)) #(root mean squared error)
         mse = mean_squared_error(self.Y_test, self.Y_predict)
