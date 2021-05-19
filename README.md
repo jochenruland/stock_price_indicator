@@ -6,7 +6,7 @@
 This project provides a stock price indicator which downloads historical stock price information from the Yahoo finance platform and performs a technical
 analysis calculating a bunch of indicators like the simple moving average, Bollinger bands, momentum, daily returns and cumulative returns. Based on these information the project further provides a machine learning pipeline to predict future stock prices.
 
-Predicting future stock prices is not an easy task. Therefore different machine learning algorithms have been tested first. The application of the different models can be found in the jupyter notebook `Stock_price_indicator.ipynb`. Best results were achieved using Lasso Lars linear regression. Therefore the machine learning pipeline uses this algorithm. But still the quality of the prediction strongly depends on the selected set of historical data. If you train the model with data from a historic time period which includes sudden extreme variations due to the pandamic in March 2020 for example, this will negatively impact the quality of the model. Therefore it is crucial to take the evaluation metrics of the underlying model into account when looking at the predictions. It may be helpful to select a longer or shorter timeframe of historical data if the evaluation of the trained model shows strong deviations and low correlation.   
+Predicting future stock prices is not an easy task. Therefore different machine learning algorithms have been tested first. The application of the different models can be found in the jupyter notebook `Stock_price_indicator.ipynb`. Best results were achieved using Lasso Lars linear regression. Therefore the machine learning pipeline uses this algorithm. But still the quality of the prediction strongly depends on the selected set of historical data. If you train the model with data from a historical time period which includes sudden extreme variations like there have been during the pandamic in March 2020 for example, this will negatively impact the quality of the model. Therefore it is crucial to take the evaluation metrics of the underlying model into account when looking at the predictions. It may be helpful to select a longer or shorter timeframe of historical data if the evaluation of the trained model shows strong deviations and low correlation.   
 
 There are two ways to access the stock price analysis and prediction:
 1. Via a flask web app `web_app.py` which launches a web server on `http://127.0.0.1:5000/`
@@ -42,11 +42,10 @@ Alternatively you can install `requirements.txt`.
 ### Main files
 - `app/data_wrangling/process_data.py`: module that includes the class StockDataAnalysis and some helper functions
 - `app/data_wrangling/train_classifier.py`: module that includes the class ModelStockPrice
-- `app/ETL.py`: ETL pipeline which extracts the data from Yahoo finance, calculates and joins features and safe the result to `indicators.db`
+- `app/ETL.py`: ETL pipeline which extracts the data from Yahoo finance, calculates and joins features and safes the result to `indicators.db`
 - `app/ML.py`: Machine learning pipeline which loads the stock data from `indicators.db`, instantiates a model object which is then fitted and used for prediction
 - `app/web_app.py`: Starts the Python server for the Webapp.
 
-@WORK---------------------------
 ### File structure
 ```
 app
