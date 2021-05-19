@@ -3,7 +3,9 @@
 Capstone project for Udacity Data Science Nanodegree 2021
 
 This Project provides a stock price indicator which downloads historical stock price information from the Yahoo finance platform and performs a technical
-analysis calculating a bunch of indicators like the simple moving average, Bollinger bands, momentum, daily returns and cumulative returns.Based on these information the project further provides a machine learning pipeline to predict future stock prices.
+analysis calculating a bunch of indicators like the simple moving average, Bollinger bands, momentum, daily returns and cumulative returns. Based on these information the project further provides a machine learning pipeline to predict future stock prices.
+
+Predicting future stock prices is not an easy task. Therefore different machine learning algorithms have been tested first. The application of the different models can be found in the jupyter notebook `Stock_price_indicator.ipynb`. Best results were achieved using Lasso Lars linear regression. Therefore the machine learning pipeline uses this algorithm. But still the quality of the prediction strongly depends on the selected set of historical data. If you train the model with data from a historic time period which includes sudden extreme variations due to the pandamic in March 2020 for example, this will negatively impact the quality of the model. Therefore it is crucial to take the evaluation metrics of the underlying model into account when looking at the predictions. It may be helpful to select a longer or shorter timeframe of historical data if the evaluation of the trained model shows strong deviations and low correlation.   
 
 There are two ways to access the stock price analysis and prediction:
 1. Via a flask web app `web_app.py` which launches a web server on `http://127.0.0.1:5000/`
@@ -14,42 +16,37 @@ There are two ways to access the stock price analysis and prediction:
       for which future stock prices shall be predicted. The ticker symbols must be a subset of the
       previously selected stock data
 
-@WORK
-Usually thousands of messages from different sources like Email, SMS, Twitter Feeds, etc. will reach people or organizations trying to help in case of a disaster while time is the most crucial resource. In this case this application intends to support these people and organizations by analyzing and automatically classifying the incoming messages and thus being able in a better way to allocate scarce resources.  
-
-The project consists of 3 main pillars:
-1. The file `process_data.py` contains an ETL Pipeline to extract the data from 2 csv files, transform the data to one dataframe and load the result into a SQLite database file.
-
-2. The file `train_classifier.py` contains a ML Pipeline which loads the data from the SQLite database, splits up the category column and transforms the categories into binary values. The file further contains a custom tokenizer to normalize, tokanize, lemmantize and stem the messages text in preparation for use in the machine learning model. The ML model uses `CountVectorizer(), TfidfTransformer()` and `MultiOutputClassifier(RandomForestClassifier()` as well as `GridSearchCV` to process the text messages and classify them into 36 categories. The trained model is finally saved in a pickle file named `classifier.pkl`.
-
-3. The file `run.py` starts the Flask Webapp and prepares 3 visualizations which are then displayed on the frontend.
-
 ## Installation
-Clone this repo to the preferred directory on your computer using `git clone https://github.com/jochenruland/disaster_response_pipeline_project`. The file `/app/run.py` starts the Webapp.
+Clone this repo to the preferred directory on your computer using `git clone https://github.com/jochenruland/stock_price_indicator`. Then start either the Webapp `/app/web_app.py` or run the two scripts `/app/ETL.py` and `/app/ML.py` .
 
 ### Libraries
 You must have installed the following libraries to run the code:
+
+`sys`
 `pandas`
 `numpy`
-`re`
-`chardet`
-`sqlalchemy`
-`nltk`
+`matplotlib`
+`yfinance`
+`datetime`
 `sklearn`
-`pickle`
+`flask`
+`werkzeug`
 `json`
 `plotly`
-`flask`
-`joblib`
+`sqlite3`
+
+Alternatively you can install `requirements.txt`.
 
 ### Program and dataset files:
 
 ### MAIN FILES
-- `data/process_data.py`: The ETL pipeline used to extract, load and transform the data needed for model building.
-- `data/DisasterResponse.db`: SQLite database file where the result from the ETL pipeline is saved.
-- `models/train_classifier.py`: The Machine Learning pipeline used to train and test the model, and evaluate its results. The model is saved as `classifier.pkl`.
-- `app/run.py`: Starts the Python server for the Webapp.
+- `app/data_wrangling/process_data.py`: module that includes the class StockDataAnalysis and some helper functions
+- `app/data_wrangling/train_classifier.py`: module that includes the class ModelStockPrice
+- `app/ETL.py`: ETL pipeline which extracts the data from Yahoo finance, calculates and joins features and safe the result to `indicators.db`
+- `app/ML.py`: Machine learning pipeline which loads the stock data from `indicators.db`, instantiates a model object which is then fitted and used for prediction
+- `app/web_app.py`: Starts the Python server for the Webapp.
 
+@WORK---------------------------
 ### FILE STRUCTURE
 ```
 app
@@ -67,20 +64,6 @@ models
 |- classifier.pkl # saved model
 README.md
 ```
-
-### Instructions to run the application:
-1. Run the following commands in the project's root directory to set up your database and model.
-
-    - To run ETL pipeline that cleans data and stores in database
-        `python data/process_data.py data/disaster_messages.csv data/disaster_categories.csv data/DisasterResponse.db`
-    - To run ML pipeline that trains classifier and saves
-        `python models/train_classifier.py data/DisasterResponse.db models/classifier.pkl`
-
-2. Run the following command in the app's directory to run your web app.
-    `python run.py`
-
-3. Go to http://0.0.0.0:3001/ or http://localhost:3001/
-
 
 ## License
 The MIT License (MIT)
