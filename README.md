@@ -8,6 +8,19 @@ analysis calculating a bunch of indicators like the simple moving average, Bolli
 
 Predicting future stock prices is not an easy task. Therefore different machine learning algorithms have been tested first. The application of the different models can be found in the jupyter notebook `Stock_price_indicator.ipynb`. Best results were achieved using Lasso Lars linear regression. Therefore the machine learning pipeline uses this algorithm. But still the quality of the prediction strongly depends on the selected set of historical data. If you train the model with data from a historical time period which includes sudden extreme variations like there have been during the pandamic in March 2020 for example, this will negatively impact the quality of the model. Therefore it is crucial to take the evaluation metrics of the underlying model into account when looking at the predictions. It may be helpful to select a longer or shorter timeframe of historical data if the evaluation of the trained model shows strong deviations and low correlation.   
 
+
+Problem Introduction
+Strategy to solve the problem
+Metrics
+EDA
+Modelling
+Hyperparameter tuning
+Results
+Conclusion/Reflection
+Improvements
+
+
+
 There are two ways to access the stock price analysis and prediction:
 1. Via a flask web app `web_app.py` which launches a web server on `http://127.0.0.1:5000/`
 2. Using the scripts `ETL.py` and `ML.py`
