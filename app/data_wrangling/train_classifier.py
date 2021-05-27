@@ -111,11 +111,11 @@ class ModelStockPrice():
             Y_predict - 1d array - contains the predicted dataset of the dependent variable (stock price) for the test period
             Y_future - 1d array - contains the predicted dataset of the dependent variable (stock price) for a future period
             time_series_test - 1d array - selected time period of test data
-            plot_data - boolean - if False data will not be plotted 
+            plot_data - boolean - if False data will not be plotted
         '''
 
-        rmse = np.sqrt(np.sum((self.Y_test - self.Y_predict) **2)/len(self.Y_predict)) #(root mean squared error)
-        mse = mean_squared_error(self.Y_test, self.Y_predict)
+        #rmse = np.sqrt(np.sum((self.Y_test - self.Y_predict) **2)/len(self.Y_predict)) #(root mean squared error)
+        #mse = mean_squared_error(self.Y_test, self.Y_predict)
         corr = np.corrcoef(self.Y_test, self.Y_predict)
         corrcoef = corr[0,1]
         mae = mean_absolute_error(self.Y_test, self.Y_predict)
@@ -123,8 +123,8 @@ class ModelStockPrice():
         r2 = r2_score(self.Y_test, self.Y_predict)
 
         result_list = []
-        result_list.append(dict(indicator='Root Mean Squared Error', val=rmse))
-        result_list.append(dict(indicator='Mean Squared Error', val=mse))
+        #result_list.append(dict(indicator='Root Mean Squared Error', val=rmse))
+        #result_list.append(dict(indicator='Mean Squared Error', val=mse))
         result_list.append(dict(indicator='Correlation', val=corrcoef))
         result_list.append(dict(indicator='Mean Absolute Error', val=mae))
         result_list.append(dict(indicator='Mean Absolute Percentage Error', val=mape))
