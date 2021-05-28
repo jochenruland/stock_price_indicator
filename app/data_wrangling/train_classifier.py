@@ -7,6 +7,7 @@ import pandas as pd
 
 from sklearn import preprocessing
 from sklearn import linear_model
+from sklearn.ensemble import RandomForestRegressor
 
 from sklearn.metrics import mean_squared_error, mean_absolute_error, mean_absolute_percentage_error, r2_score
 
@@ -20,8 +21,8 @@ class ModelStockPrice():
             self.start_predict = start_predict
             self.end_predict = end_predict
 
-        self.model = linear_model.LassoLars(alpha = 0.1)
-
+        #self.model = linear_model.LassoLars(alpha = 0.1)
+        self.model = RandomForestRegressor(random_state=42, criterion='mse', n_estimators=10, min_samples_split=10)
 
     def create_train_test_data(self, indicator_df, train_size=0.8):
         ''' Splits the indicator dataframe into a train and test dataset and standardizes the data of the indipendent variable
