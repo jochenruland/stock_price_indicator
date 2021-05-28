@@ -3,36 +3,54 @@ import sys
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import yfinance as yf
 import datetime as dt
 
-# Import data from Yahoo finance
+from alpha_vantage.timeseries import TimeSeries
+import os.path
+
+# Download data from Alpha-Vantage
+
+def download_stock_data(symbol, API_key='AG0F6BKQTUPYSY99'):
+    try:
+        ts = TimeSeries(key = API_key, output_format = 'pandas')
+        data = ts.get_daily_adjusted(symbol, outputsize='full')
+        symbol = symbol.upper()
+        df = data[0]['5. adjusted close'].reset_index().rename(columns={"5. adjusted close": symbol}).sort_values('date', ascending =True)
+        df.to_csv(symbol+'.csv', index = False)
+        return df
+    except Exception as e:
+                print('Execption occurred: {}'.format(e))
+
+# Import data from csv file
 
 def get_data(symbol='AAPL', start_date='2020-01-01', end_date='2020-12-31'):
     '''
-    Setup of an empty dataframe with the given timeperiod as index to be used as instance for further gathered data.
-    Then downloads the data from Yahoo Finance for the selected symbol(s) and time period and selects the Adj Close column
+    Setup an empty dataframe with the given timeperiod as index to be used as instance for further gathered data.
+    Then loads data from a .csv file for the selected symbol and selects the Adj Close column
     INPUT:
-    symbols - str - symbol of listed stocks
+    symbols - list - symbols of listed stocks
     start_date - datetime - Beginning of the period to analyze
     end_date - datetime - End of the period to analyze
 
     OUTPUT
-    df - dataframe - Dataframe containing the Adj Close for each symbol with the time period as index (ordered ascending)
+    df - dataframe - Dataframe containing the Adj Close for the symbol with the time period as index (ordered ascending)
     '''
-    dates= pd.date_range(start_date, end_date)
-    df = pd.DataFrame(index=dates)
+    try:
+        dates= pd.date_range(start_date, end_date)
+        df = pd.DataFrame(index=dates)
 
+        if os.path.isfile(symbol+'.csv') == False:
+            print("No such file exists; will be downloaded")
+            download_stock_data(symbol)
 
-    df_tmp = yf.download(symbol, start_date, end_date)
-    df_tmp = df_tmp[['Adj Close']]
-    df_tmp = df_tmp.rename(columns={"Adj Close": symbol})
+        df_tmp = pd.read_csv(symbol+'.csv', index_col = 'date')
 
-    df = df.join(df_tmp)
-    df = df.dropna()
+        df = df.join(df_tmp)
+        df = df.dropna()
 
-    return df
-
+        return df
+    except Exception as e:
+                print('Execption occurred: {}'.format(e))
 
 # Noramlize the stock price data
 def normalize_stock_data(df):
@@ -159,14 +177,16 @@ class StockDataAnalysis():
 
         return self.indicator_df
 
-def main(symbol='AAPL', start_date='2020-01-01', end_date='2020-12-31'):
+def main(symbol='APPL', start_date='2020-01-01', end_date='2020-12-31'):
     ''' This Function creates an instance of the StockDataAnalysis class and plots the result '''
-
-    st_data = StockDataAnalysis(start_date=start_date, end_date=end_date)
-    st_data.setup_features()
-    df_indicators = st_data.create_indicator_dataframe()
-    print(df_indicators.head(50))
-    st_data.plot_stock_data(normalized=False)
+    try:
+        st_data = StockDataAnalysis(symbol=symbol, start_date=start_date, end_date=end_date)
+        st_data.setup_features()
+        df_indicators = st_data.create_indicator_dataframe()
+        print(df_indicators.head(50))
+        st_data.plot_stock_data(normalized=False)
+    except Exception as e:
+        print('Execption occurred: {}'.format(e))
 
 if __name__ == '__main__':
     main()
