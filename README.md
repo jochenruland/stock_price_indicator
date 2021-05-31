@@ -3,23 +3,11 @@
 
 ## Capstone project for Udacity Data Science Nanodegree 2021
 
-This project provides a stock price indicator which downloads historical stock price information from the Yahoo finance platform and performs a technical
-analysis calculating a bunch of indicators like the simple moving average, Bollinger bands, momentum, daily returns and cumulative returns. Based on these information the project further provides a machine learning pipeline to predict future stock prices.
+This project provides a stock price indicator which downloads historical stock price information from the Alpha-Vantage platform. In order to download data from Alpha-Vantage please refer to https://www.alphavantage.co/support/#api-key. The API key has to be set in `process_data.py` for the parameter `A_key`. This version uses my personal API key which will be deactivated after review of the project.
 
-Predicting future stock prices is not an easy task. Therefore different machine learning algorithms have been tested first. The application of the different models can be found in the jupyter notebook `Stock_price_indicator.ipynb`. Best results were achieved using Lasso Lars linear regression. Therefore the machine learning pipeline uses this algorithm. But still the quality of the prediction strongly depends on the selected set of historical data. If you train the model with data from a historical time period which includes sudden extreme variations like there have been during the pandamic in March 2020 for example, this will negatively impact the quality of the model. Therefore it is crucial to take the evaluation metrics of the underlying model into account when looking at the predictions. It may be helpful to select a longer or shorter timeframe of historical data if the evaluation of the trained model shows strong deviations and low correlation.   
+Once the data has been downloaded the application performs a technical analysis calculating a bunch of indicators like the simple moving average, Bollinger bands, momentum, daily returns and cumulative returns. Based on these information the project further provides a machine learning pipeline to predict future stock prices.
 
-
-Problem Introduction
-Strategy to solve the problem
-Metrics
-EDA
-Modelling
-Hyperparameter tuning
-Results
-Conclusion/Reflection
-Improvements
-
-
+Different machine learning algorithms have been tested first. The application of the different models can be found in the Jupyter notebook `Stock_price_indicator.ipynb`. Once everything has been analyzed and tested in the Jupyter Notebook the final application has been implemented in python scripts and a Webapp. For a detailed description of the project please refer to `Project_documentation_20210531.pdf`    
 
 There are two ways to access the stock price analysis and prediction:
 1. Via a flask web app `web_app.py` which launches a web server on `http://127.0.0.1:5000/`
@@ -39,7 +27,7 @@ You must have installed the following libraries to run the code:
 `pandas`
 `numpy`
 `matplotlib`
-`yfinance`
+`alpha_vantage.timeseries`
 `datetime`
 `sklearn`
 `flask`
@@ -47,8 +35,6 @@ You must have installed the following libraries to run the code:
 `json`
 `plotly`
 `sqlite3`
-
-Alternatively you can install `requirements.txt`.
 
 ## Program and dataset files:
 
@@ -66,6 +52,11 @@ app
 |- ETL.py
 |- ML.py
 |- indicators.db # Database saving results from ETL.py
+|- AAPL.csv # Sample data download for Apple
+|- BABA.csv # Sample data download for Alibaba
+|- GOLD.csv # Sample data download for Barrick Gold
+|- GOOG.csv # Sample data download for Alphabet
+|- SPY.csv  # Sample data download for S&P 500 Market Index
 |- templates
 | |- index.html # main page of web app
 | |- base.html # formatting page of web app
@@ -74,7 +65,7 @@ app
 | |- process_data.py
 | |- train_classifier.py
 README.md
+Project_documentation_20210531
 LICENSE.txt
-requirements.txt
 Stock_price_indicator.ipynb
 ```
