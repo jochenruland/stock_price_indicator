@@ -9,8 +9,10 @@ from alpha_vantage.timeseries import TimeSeries
 import os.path
 
 # Download data from Alpha-Vantage
+A_key = 'AG0F6BKQTUPYSY99'
 
-def download_stock_data(symbol, API_key='AG0F6BKQTUPYSY99'):
+
+def download_stock_data(symbol, API_key= A_key):
     try:
         ts = TimeSeries(key = API_key, output_format = 'pandas')
         data = ts.get_daily_adjusted(symbol, outputsize='full')
