@@ -20,8 +20,8 @@ def main(symbol='AAPL'):
     if sd >= ed:
         return print('Start date must be before end date')
 
-    elif (ed - sd).days > 7:
-        return print('No predictions for more than 7 days will be made')
+    elif (ed - sd).days > 15:
+        return print('No predictions for more than 15 days will be made')
 
     elif sd > dt.datetime.now():
         return print('Start of prediction must be equal or before actual date')

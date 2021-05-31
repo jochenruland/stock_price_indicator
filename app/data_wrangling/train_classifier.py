@@ -134,9 +134,9 @@ class ModelStockPrice():
         fig = plt.figure(figsize=(12,8))
 
         value_days = len(self.Y_future)
-        end_date = (self.time_series_test.iloc[-1] + dt.timedelta(days=value_days+1))
+        end_date = (self.time_series_test.iloc[-1] + dt.timedelta(days=value_days))
 
-        time_series_future = pd.date_range(self.time_series_test.iloc[-1]+ dt.timedelta(days=2) , end_date).tolist()
+        time_series_future = pd.date_range(self.time_series_test.iloc[-1]+ dt.timedelta(days=1) , end_date).tolist()
 
         if plot_data:
             plt.plot(self.time_series_test, self.Y_test, color='lightblue', linewidth=2, label='test data')
