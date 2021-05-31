@@ -51,11 +51,8 @@ def post():
     start_date = session['start_date']
     end_date = session['end_date']
 
-    st_data = StockDataAnalysis(ticker, start_date, end_date)
-    if st_data.data.shape[0] == 0:
-        flash('No data could be found for ticker symbol')
-        return redirect(url_for('index'))
-    else:
+    try:
+        st_data = StockDataAnalysis(ticker, start_date, end_date)
         st_data.setup_features()
         df_indicators = st_data.create_indicator_dataframe()
 
@@ -166,3 +163,6 @@ def post():
                                figuresJSON=figuresJSON,
                                pred_vals = pred_vals,
                                evaluation_result=evaluation_result)
+    except Exception as e:
+        flash('No analysis possible for this ticker symbol')
+        return redirect(url_for('index'))
